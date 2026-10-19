@@ -64,7 +64,9 @@
     borrar('localStorage', CLAVE_SESION);
     borrar('sessionStorage', CLAVE_SESION);
   };
-  US.paginaDeRol = (rol) => (rol === 'profesor' ? 'profesor.html' : 'estudiante.html');
+  US.PAGINAS = { estudiante: 'estudiante.html', profesor: 'profesor.html', administrador: 'admin.html' };
+  US.ROLES = { estudiante: 'Estudiante', profesor: 'Profesor(a)', administrador: 'Admin. de eventos sociales' };
+  US.paginaDeRol = (rol) => US.PAGINAS[rol] || 'index.html';
 
   /** Control de acceso por rol: si no hay sesión válida, vuelve al login. */
   US.requerirRol = (rol) => {
@@ -208,12 +210,14 @@
    * Ventana modal. acciones: [{ texto, clase, valor }]. Devuelve una promesa
    * con el `valor` de la acción elegida (o null si se cierra).
    */
-  US.modal = ({ titulo, html, acciones = [{ texto: 'Cerrar', clase: 'btn-sec', valor: null }], alAbrir }) => new Promise((resolve) => {
+  /* validar(valor, fondo): si devuelve un texto, la ventana NO se cierra (sirve para formularios dentro del modal).
+     ancho: true para ventanas con más contenido (detalle de eventos). */
+  US.modal = ({ titulo, html, acciones = [{ texto: 'Cerrar', clase: 'btn-sec', valor: null }], alAbrir, validar, ancho }) => new Promise((resolve) => {
     const previo = document.activeElement;
     const fondo = document.createElement('div');
     fondo.className = 'modal-fondo';
     fondo.innerHTML =
-      '<div class="modal" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">' +
+      '<div class="modal' + (ancho ? ' modal-ancho' : '') + '" role="dialog" aria-modal="true" aria-labelledby="modal-titulo">' +
         '<div class="modal-cab"><h2 id="modal-titulo">' + US.esc(titulo) + '</h2>' +
         '<button class="modal-x" aria-label="Cerrar" data-cerrar>×</button></div>' +
         '<div class="modal-cuerpo">' + html + '</div>' +
@@ -233,7 +237,10 @@
     fondo.addEventListener('click', (e) => {
       if (e.target === fondo || e.target.hasAttribute('data-cerrar')) return cerrar(null);
       const b = e.target.closest('[data-accion]');
-      if (b) cerrar(acciones[Number(b.dataset.accion)].valor);
+      if (!b) return;
+      const valor = acciones[Number(b.dataset.accion)].valor;
+      if (validar && valor !== null && valor !== false && validar(valor, fondo)) return;
+      cerrar(valor);
     });
     const foco = fondo.querySelector('.modal-pie .btn:last-child') || fondo.querySelector('.modal-x');
     foco.focus();
@@ -251,19 +258,29 @@
     const nav = document.getElementById('nav');
     const main = document.getElementById('main');
     document.getElementById('usuario-nombre').textContent = 'Hola, ' + US.primerNombre(usuario.nombre);
-    document.getElementById('usuario-rol').textContent = usuario.rol === 'profesor' ? 'Profesor(a)' : 'Estudiante';
+    document.getElementById('usuario-rol').textContent = US.ROLES[usuario.rol] || usuario.rol;
     document.getElementById('avatar').textContent = US.iniciales(usuario.nombre);
     document.getElementById('btn-salir').addEventListener('click', () => { US.cerrarSesion(); window.location.replace('index.html'); });
 
     nav.innerHTML = Object.entries(rutas).map(([k, r]) =>
-      '<a href="#' + k + '" data-ruta="' + k + '">' + US.esc(r.titulo) + (k === 'mensajes' ? ' <span class="badge" id="badge-mensajes" hidden></span>' : '') + '</a>').join('');
+      '<a href="#' + k + '" data-ruta="' + k + '">' + US.esc(r.titulo) +
+      (k === 'mensajes' ? ' <span class="badge" id="badge-mensajes" hidden></span>' : '') +
+      (r.badge ? ' <span class="badge" data-badge="' + k + '" hidden></span>' : '') + '</a>').join('');
 
     const actualizarBadge = () => {
       const b = document.getElementById('badge-mensajes');
-      if (!b) return;
-      const n = US.noLeidos(usuario.id);
-      b.textContent = n; b.hidden = n === 0;
-      b.setAttribute('aria-label', n + ' mensajes sin leer');
+      if (b) {
+        const n = US.noLeidos(usuario.id);
+        b.textContent = n; b.hidden = n === 0;
+        b.setAttribute('aria-label', n + ' mensajes sin leer');
+      }
+      // Contadores adicionales definidos por cada ruta (p. ej. propuestas pendientes)
+      nav.querySelectorAll('[data-badge]').forEach((el) => {
+        const r = rutas[el.dataset.badge];
+        const c = r.badge();
+        el.textContent = c; el.hidden = c === 0;
+        el.setAttribute('aria-label', c + ' ' + (r.badgeTexto || 'pendientes'));
+      });
     };
     US.actualizarBadge = actualizarBadge;
 

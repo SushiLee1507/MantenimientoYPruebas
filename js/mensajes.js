@@ -13,7 +13,8 @@
    * @param {string} sub  subvista
    * @param {Object} op   { grupos: grupos visibles para avisos,
    *                        destinatarios: [{ id, nombre, detalle }],
-   *                        puedePublicar: boolean }
+   *                        puedePublicar: boolean,
+   *                        general: boolean  → puede publicar avisos para toda la universidad }
    */
   US.vistaMensajes = (main, usuario, sub, op) => {
     const vista = ['avisos', 'entrada', 'enviados', 'nuevo'].includes(sub) ? sub : 'avisos';
@@ -67,16 +68,18 @@
 
     let html = '';
     if (op.puedePublicar) {
+      const hayDestino = grupos.length || op.general;
       html += '<div class="tarjeta"><h2>Publicar aviso</h2>' +
-        (grupos.length ? '' : '<p class="muted">No tienes grupos asignados en el periodo actual.</p>') +
-        '<form id="form-aviso" novalidate' + (grupos.length ? '' : ' hidden') + '>' +
+        (hayDestino ? '' : '<p class="muted">No tienes grupos asignados en el periodo actual.</p>') +
+        '<form id="form-aviso" novalidate' + (hayDestino ? '' : ' hidden') + '>' +
           '<div class="fila-2">' +
             '<div class="campo"><label for="av-grupo">Dirigido a</label><select class="input" id="av-grupo">' +
+              (op.general ? '<option value="">General · toda la universidad</option>' : '') +
               grupos.map((g) => '<option value="' + g.id + '">' + esc(g.codigo + ' · ' + g.nombre + ' (' + g.grupo + ')') + '</option>').join('') +
             '</select></div>' +
             '<div class="campo"><label for="av-titulo">Título</label><input class="input" id="av-titulo" maxlength="100" placeholder="Ej.: Cambio de fecha del parcial"><div class="error-campo" id="err-av-titulo"></div></div>' +
           '</div>' +
-          '<div class="campo"><label for="av-cuerpo">Contenido</label><textarea class="input" id="av-cuerpo" maxlength="1000" placeholder="Escribe el aviso para tus estudiantes…"></textarea><div class="error-campo" id="err-av-cuerpo"></div></div>' +
+          '<div class="campo"><label for="av-cuerpo">Contenido</label><textarea class="input" id="av-cuerpo" maxlength="1000" placeholder="' + (op.general ? 'Escribe el aviso para la comunidad universitaria…' : 'Escribe el aviso para tus estudiantes…') + '"></textarea><div class="error-campo" id="err-av-cuerpo"></div></div>' +
           '<div style="display:flex;justify-content:space-between;align-items:center;gap:1rem;flex-wrap:wrap">' +
             '<label class="check"><input type="checkbox" id="av-importante"> Marcar como importante</label>' +
             '<button class="btn btn-pri" type="submit">Publicar aviso</button>' +
@@ -120,14 +123,15 @@
       errC.textContent = c.value.trim().length < 10 ? 'El contenido debe tener al menos 10 caracteres.' : '';
       t.classList.toggle('invalido', !!errT.textContent); c.classList.toggle('invalido', !!errC.textContent);
       if (errT.textContent || errC.textContent) return;
+      const destino = form.querySelector('#av-grupo').value || null;
       US.db.avisos.push({
-        id: US.nuevoId('a'), autorId: usuario.id, grupoId: form.querySelector('#av-grupo').value,
+        id: US.nuevoId('a'), autorId: usuario.id, grupoId: destino,
         importante: form.querySelector('#av-importante').checked, fecha: US.ahora(),
         titulo: t.value.trim(), cuerpo: c.value.trim()
       });
       US.guardar();
       form.reset();
-      US.toast('Aviso publicado para el grupo.');
+      US.toast(destino ? 'Aviso publicado para el grupo.' : 'Aviso general publicado.');
       pintar();
     });
   }

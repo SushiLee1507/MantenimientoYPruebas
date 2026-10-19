@@ -138,6 +138,7 @@ textarea.input { resize: vertical; min-height: 120px; }
 .demo-btn:hover { border-color: var(--pri-700); }
 .demo-btn b { display: block; font-size: .85rem; color: var(--pri-800); }
 .demo-btn span { font-size: .75rem; color: var(--texto-2); word-break: break-all; }
+.demo-btn.ancho { grid-column: 1 / -1; }
 .enlace-reset { background: none; border: 0; font: inherit; font-size: .8rem; color: var(--texto-2); text-decoration: underline; cursor: pointer; padding: 0; margin-top: .9rem; }
 
 @media (max-width: 860px) {
@@ -152,13 +153,13 @@ textarea.input { resize: vertical; min-height: 120px; }
    APLICACIÓN (paneles de estudiante y profesor)
    ========================================================================== */
 .cabecera { background: #fff; border-bottom: 2px solid var(--pri-800); position: sticky; top: 0; z-index: 20; }
-.cabecera-in { max-width: 1200px; margin: 0 auto; padding: .45rem 1rem; display: flex; align-items: center; gap: 1rem; }
+.cabecera-in { max-width: 1200px; margin: 0 auto; padding: .45rem 1rem; display: flex; align-items: center; gap: .75rem; }
 .cabecera .marca { color: var(--pri-800); }
 .cabecera .marca-logo { width: 50px; height: 50px; box-shadow: none; }
-.nav { display: flex; gap: .25rem; flex: 1; overflow-x: auto; scrollbar-width: none; }
+.nav { display: flex; gap: .2rem; flex: 1; overflow-x: auto; scrollbar-width: none; }
 .nav::-webkit-scrollbar { display: none; }
 .nav a {
-  color: var(--pri-800); text-decoration: none; font-size: .92rem; font-weight: 550; padding: .5rem .7rem; border-radius: 8px;
+  color: var(--pri-800); text-decoration: none; font-size: .92rem; font-weight: 550; padding: .5rem .55rem; border-radius: 8px;
   white-space: nowrap; display: inline-flex; align-items: center; gap: .35rem;
 }
 .nav a:hover { background: var(--pri-50); }
@@ -326,6 +327,69 @@ td.num, th.num { text-align: center; font-variant-numeric: tabular-nums; }
 .toast-error { background: var(--peligro); }
 .toast.saliendo { opacity: 0; transform: translateY(6px); transition: .3s; }
 @keyframes subir { from { opacity: 0; transform: translateY(8px); } }
+
+/* ==========================================================================
+   EVENTOS SOCIALES (estudiante · profesor · administrador)
+   ========================================================================== */
+.chip-pri { background: var(--pri-100); color: var(--pri-800); }
+.titulo-seccion .horas-pill {
+  display: inline-flex; align-items: baseline; gap: .4rem; text-decoration: none; color: var(--pri-800);
+  background: var(--pri-100); border: 1px solid var(--pri-200); border-radius: 999px; padding: .4rem 1rem; font-size: .88rem; font-weight: 600;
+}
+.horas-pill b { font-size: 1.25rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+.horas-pill:hover { border-color: var(--pri-700); }
+
+.eventos-filtros { display: flex; gap: .6rem; align-items: center; flex-wrap: wrap; margin-bottom: 1.1rem; }
+.eventos-filtros .buscador { flex: 1 1 240px; }
+.eventos-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(min(100%, 330px), 1fr)); gap: 1.25rem; }
+.evento {
+  background: var(--superficie); border-radius: var(--radio); box-shadow: var(--sombra); border-top: 4px solid var(--pri-700);
+  padding: 1.1rem 1.2rem; display: flex; flex-direction: column; gap: .75rem; min-width: 0;
+}
+.evento-cab { display: flex; gap: .9rem; align-items: flex-start; }
+.evento-cab h3 { margin: .35rem 0 0; color: var(--texto); font-size: 1.02rem; }
+.evento-fecha {
+  flex: none; width: 58px; text-align: center; background: var(--pri-100); color: var(--pri-900);
+  border-radius: 10px; padding: .3rem 0 .35rem; line-height: 1.1;
+}
+.evento-fecha b { display: block; font-size: 1.45rem; font-weight: 750; font-variant-numeric: tabular-nums; }
+.evento-fecha span { display: block; font-size: .68rem; text-transform: uppercase; letter-spacing: .05em; font-weight: 650; color: var(--pri-700); }
+.evento-meta { list-style: none; margin: 0; padding: 0; display: grid; gap: .2rem; font-size: .86rem; color: var(--texto-2); }
+.evento-meta b { color: var(--texto); font-weight: 600; }
+.evento-desc {
+  font-size: .86rem; color: var(--texto-2); margin: 0;
+  display: -webkit-box; -webkit-line-clamp: 3; -webkit-box-orient: vertical; overflow: hidden;
+}
+.evento-pie { margin-top: auto; display: flex; justify-content: space-between; align-items: center; gap: .6rem; flex-wrap: wrap; border-top: 1px solid var(--borde); padding-top: .8rem; }
+.cupo-txt { display: block; font-size: .8rem; color: var(--texto-2); margin-top: .3rem; }
+.barra-multi { display: flex; }
+.barra-multi > i { border-radius: 0; }
+.barra-multi > i.pend { background: var(--pri-300); }
+
+.caja-detalle { background: var(--pri-50); border: 1px solid var(--pri-200); border-radius: 10px; padding: 1rem 1.1rem; margin-top: .25rem; }
+.caja-detalle h3 { margin-bottom: .4rem; }
+.caja-detalle + .campo { margin-top: 1.1rem; }
+.responsabilidades { padding-left: 1.2rem; margin: .5rem 0 .75rem; font-size: .9rem; }
+.responsabilidades li { margin-bottom: .2rem; }
+.ayuda { font-size: .78rem; color: var(--texto-2); margin-top: .3rem; }
+.input-archivo { padding: .45rem .6rem; cursor: pointer; }
+.input-archivo::file-selector-button {
+  font: inherit; font-weight: 600; font-size: .82rem; color: var(--pri-800); background: #fff;
+  border: 1.5px solid var(--pri-800); border-radius: 8px; padding: .25rem .7rem; margin-right: .75rem; cursor: pointer;
+}
+.archivo { font-size: .84rem; word-break: break-all; }
+.archivo::before { content: '📎 '; }
+.estado-motivo { display: block; font-size: .78rem; color: var(--texto-2); margin-top: .3rem; max-width: 34ch; white-space: normal; }
+.acciones-celda { display: flex; gap: .35rem; flex-wrap: wrap; }
+.acciones-col { display: grid; gap: .5rem; }
+.texto-largo { white-space: pre-line; }
+.fila-3 { display: grid; grid-template-columns: 1.2fr 1fr 1fr; gap: 0 1rem; }
+@media (max-width: 700px) { .fila-3 { grid-template-columns: 1fr 1fr; } .fila-3 > :first-child { grid-column: 1 / -1; } }
+.enlace-fila { display: flex; flex-direction: column; text-decoration: none; color: var(--texto); }
+.enlace-fila small { color: var(--texto-2); }
+.enlace-fila:hover b { color: var(--pri-800); text-decoration: underline; }
+.modal-ancho { max-width: 720px; }
+.modal h3 { color: var(--pri-800); }
 
 /* Impresión del horario */
 @media print {

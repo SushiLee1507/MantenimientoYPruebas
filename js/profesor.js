@@ -1,6 +1,6 @@
 /* ==========================================================================
    Universidad Social — Panel del profesor
-   Secciones: Inicio · Horario · Calificaciones · Mensajes y avisos
+   Secciones: Inicio · Horario · Calificaciones · Mensajes y avisos · Eventos sociales
    ========================================================================== */
 (function () {
   'use strict';
@@ -14,6 +14,15 @@
     return '<div class="stat"><div class="stat-lbl">' + lbl + '</div><div class="stat-val">' + val + '</div><div class="stat-sub">' + sub + '</div></div>';
   }
 
+  /** Estado de las propuestas de labor social en el inicio. */
+  function alertaEventos() {
+    const mias = US.eventosDe(yo.id);
+    const pend = mias.filter((e) => e.estado === 'pendiente').length;
+    const pub = mias.filter((e) => e.estado === 'publicada').length;
+    if (!mias.length) return '<div class="alerta alerta-info">¿Tienes una actividad de labor social en mente? <a href="#eventos/postular">Postúlala aquí</a>.</div>';
+    return '<div class="alerta alerta-info">Eventos sociales: <b>' + pend + '</b> propuesta' + (pend === 1 ? '' : 's') + ' en evaluación y <b>' + pub + '</b> publicada' + (pub === 1 ? '' : 's') + '. <a href="#eventos">Ver mis propuestas</a></div>';
+  }
+
   /* ---------------- Inicio ---------------- */
   function inicio(main) {
     const grupos = misGrupos();
@@ -24,6 +33,7 @@
     main.innerHTML =
       '<section class="bienvenida"><h1>Hola, Prof. ' + esc(US.primerNombre(yo.nombre)) + '</h1>' +
       '<p>Departamento de ' + esc(yo.departamento) + ' · ' + esc(cfg().periodoActual) + '</p></section>' +
+      alertaEventos() +
       '<div class="stats">' +
         stat('Grupos a cargo', grupos.length, cfg().periodoActual) +
         stat('Estudiantes', totalEst, 'Inscritos en tus grupos') +
@@ -186,7 +196,8 @@
       .map(([id, cods]) => ({ id, nombre: US.nombreUsuario(id), detalle: 'Estudiante · ' + cods.join(', ') }))
       .sort((a, b) => a.nombre.localeCompare(b.nombre))
       .concat(US.db.usuarios.filter((u) => u.rol === 'profesor' && u.id !== yo.id)
-        .map((u) => ({ id: u.id, nombre: u.nombre, detalle: 'Profesor(a) · ' + u.departamento })));
+        .map((u) => ({ id: u.id, nombre: u.nombre, detalle: 'Profesor(a) · ' + u.departamento })))
+      .concat(US.db.usuarios.filter((u) => u.rol === 'administrador').map((u) => ({ id: u.id, nombre: u.nombre, detalle: 'Administración de eventos sociales' })));
     US.vistaMensajes(main, yo, sub, { grupos, destinatarios, puedePublicar: true });
   }
 
@@ -197,7 +208,8 @@
       inicio: { titulo: 'Inicio', render: inicio },
       horario: { titulo: 'Horario', render: horario },
       calificaciones: { titulo: 'Calificaciones', render: calificaciones },
-      mensajes: { titulo: 'Mensajes y avisos', render: mensajes }
+      mensajes: { titulo: 'Mensajes y avisos', render: mensajes },
+      eventos: { titulo: 'Eventos sociales', render: (main, sub) => US.vistaEventosProponente(main, yo, sub) }
     }
   });
 })();

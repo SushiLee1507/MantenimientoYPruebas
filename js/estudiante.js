@@ -1,6 +1,6 @@
 /* ==========================================================================
    Universidad Social — Panel del estudiante
-   Secciones: Inicio · Horario · Calificaciones · Mensajes y avisos · Inscripción
+   Secciones: Inicio · Horario · Calificaciones · Mensajes y avisos · Inscripción · Eventos sociales
    ========================================================================== */
 (function () {
   'use strict';
@@ -25,6 +25,7 @@
       (cfg().inscripcionAbierta
         ? '<div class="alerta alerta-info">La inscripción de materias está abierta hasta el ' + US.fecha(cfg().cierreInscripcion) + '. <a href="#inscripcion">Ir a inscripción</a></div>'
         : '') +
+      alertaEventos() +
       '<div class="stats">' +
         stat('Materias inscritas', grupos.length, cfg().periodoActual) +
         stat('Créditos', creditos + '<small> / ' + cfg().maxCreditos + '</small>', 'Máximo permitido: ' + cfg().maxCreditos) +
@@ -44,6 +45,15 @@
         '</section>' +
       '</div>';
   }
+  /** Resumen de labor social en el inicio. */
+  function alertaEventos() {
+    const disponibles = US.convocatoriasAbiertas().filter((ev) => US.validarInscripcionEvento(yo.id, ev.id).ok).length;
+    const horas = US.horasDe(yo.id);
+    return '<div class="alerta alerta-ok">Llevas <b>' + horas + ' horas</b> de labor social' +
+      (disponibles ? ' y hay <b>' + disponibles + '</b> convocatoria' + (disponibles === 1 ? '' : 's') + ' abierta' + (disponibles === 1 ? '' : 's') + ' para ti.' : '.') +
+      ' <a href="#eventos">Ir a eventos sociales</a></div>';
+  }
+
   function stat(lbl, val, sub) {
     return '<div class="stat"><div class="stat-lbl">' + lbl + '</div><div class="stat-val">' + val + '</div><div class="stat-sub">' + sub + '</div></div>';
   }
@@ -219,7 +229,8 @@
     const grupos = misGrupos();
     const profes = {};
     grupos.forEach((g) => { (profes[g.profesorId] = profes[g.profesorId] || []).push(g.nombre); });
-    const destinatarios = Object.entries(profes).map(([id, mats]) => ({ id, nombre: US.nombreUsuario(id), detalle: mats.join(', ') }));
+    const destinatarios = Object.entries(profes).map(([id, mats]) => ({ id, nombre: US.nombreUsuario(id), detalle: mats.join(', ') }))
+      .concat(US.db.usuarios.filter((u) => u.rol === 'administrador').map((u) => ({ id: u.id, nombre: u.nombre, detalle: 'Eventos sociales' })));
     US.vistaMensajes(main, yo, sub, { grupos, destinatarios, puedePublicar: false });
   }
 
@@ -231,7 +242,8 @@
       horario: { titulo: 'Horario', render: horario },
       calificaciones: { titulo: 'Calificaciones', render: calificaciones },
       mensajes: { titulo: 'Mensajes y avisos', render: mensajes },
-      inscripcion: { titulo: 'Inscripción', render: inscripcion }
+      inscripcion: { titulo: 'Inscripción', render: inscripcion },
+      eventos: { titulo: 'Eventos sociales', render: (main, sub) => US.vistaEventosEstudiante(main, yo, sub) }
     }
   });
 })();
