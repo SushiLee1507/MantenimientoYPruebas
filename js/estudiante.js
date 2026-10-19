@@ -2,6 +2,7 @@
    Universidad Social — Panel del estudiante
    Secciones: Inicio · Horario · Calificaciones · Mensajes y avisos · Inscripción · Eventos sociales
    ========================================================================== */
+    /*.*/
 (function () {
   'use strict';
   const yo = US.requerirRol('estudiante');

@@ -1,6 +1,5 @@
 /* ==========================================================================
    Universidad Social — Panel del profesor
-   Secciones: Inicio · Horario · Calificaciones · Mensajes y avisos · Eventos sociales
    ========================================================================== */
 (function () {
   'use strict';

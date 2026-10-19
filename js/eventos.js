@@ -1,17 +1,8 @@
 /* ==========================================================================
    Universidad Social — Eventos sociales (labor social universitaria)
    Reglas de negocio compartidas + vistas de estudiante y proponente (profesor).
-
-   RF-04  Postulación de actividades sociales (profesor)
-   RF-05  Evaluación de propuestas por el administrador
-   RF-06  Publicación de actividades aprobadas
-   RF-07  Inscripción de estudiantes en actividades publicadas
-   RF-08  Validación de inscripción duplicada
-   RF-09  Cierre de convocatoria (administrador)
-   RF-10  Gestión de estudiantes postulados (administrador)
-   RF-16  Visualización de horas sociales acumuladas
-   RF-18  Carga y validación de archivos (PDF/JPG/PNG, máx. 2 MB)
    ========================================================================== */
+    /*.*/
 (function () {
   'use strict';
   const esc = US.esc;

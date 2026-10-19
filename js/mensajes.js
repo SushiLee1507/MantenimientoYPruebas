@@ -1,6 +1,5 @@
 /* ==========================================================================
    Universidad Social — Gestión de mensajes y avisos (compartido)
-   Subvistas: #mensajes/avisos · #mensajes/entrada · #mensajes/enviados · #mensajes/nuevo
    ========================================================================== */
 (function () {
   'use strict';

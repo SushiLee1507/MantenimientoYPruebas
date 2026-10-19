@@ -1,9 +1,7 @@
 /* ==========================================================================
-   Universidad Social — Inicio de sesión (RF-02)
-   - Validación de campos
-   - Autenticación y redirección según el rol (estudiante / profesor / administrador de eventos sociales)
-   - "Recordarme" (sesión persistente 7 días) y bloqueo tras 5 intentos fallidos
+   Universidad Social
    ========================================================================== */
+    /*.*/
 (function () {
   'use strict';
 

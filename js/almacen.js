@@ -2,6 +2,7 @@
    Universidad Social — Núcleo: almacenamiento, sesión, reglas y utilidades UI
    Expone el objeto global `US`.
    ========================================================================== */
+    /*.*/
 (function () {
   'use strict';
 

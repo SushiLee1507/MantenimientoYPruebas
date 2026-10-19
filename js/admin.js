@@ -4,6 +4,7 @@
    RF-05 Evaluación de propuestas · RF-06 Publicación · RF-09 Cierre de convocatoria
    RF-10 Gestión de estudiantes postulados (aceptar, rechazar, quitar, agregar)
    ========================================================================== */
+    /*.*/
 (function () {
   'use strict';
   const yo = US.requerirRol('administrador');

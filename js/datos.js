@@ -3,6 +3,7 @@
    En esta entrega (avance) los datos viven en el navegador (localStorage).
    En la versión final se reemplazan por la base de datos del servidor.
    ========================================================================== */
+    /*.*/
 (function () {
   'use strict';
   /* Las fechas de los eventos sociales se calculan relativas al día en que se cargan los datos,
